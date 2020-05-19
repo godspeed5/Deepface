@@ -6,6 +6,8 @@ import cv2
 import time
 import re
 
+
+
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
@@ -91,7 +93,6 @@ def analysis(db_path, model_name, distance_metric, enable_face_analysis = True):
 	tic = time.time()
 	
 	pbar = tqdm(range(0, len(employees)), desc='Finding embeddings')
-	
 	embeddings = []
 	#for employee in employees:
 	for index in pbar:
@@ -114,7 +115,7 @@ def analysis(db_path, model_name, distance_metric, enable_face_analysis = True):
 	
 	#-----------------------
 
-	time_threshold = 5; frame_threshold = 5
+	time_threshold = 1; frame_threshold = 1
 	pivot_img_size = 112 #face recognition result image
 
 	#-----------------------
@@ -438,6 +439,29 @@ def analysis(db_path, model_name, distance_metric, enable_face_analysis = True):
 											cv2.line(freeze_img, (x+int(w/2)+int(w/4), y+h+int(pivot_img_size/2)), (x+w, y+h+int(pivot_img_size/2)), (67,67,67),1)
 									except Exception as err:
 										print(str(err))
+								else:
+									name = str(input('Person not identified, Enter name  '))
+									print(name)
+									if name != '':
+										index = 1
+										os.chdir(os.getcwd()+'/database')
+										for filename in os.listdir():
+											if name+str(index)+'.jpg' in filename:
+												index+=1
+										print(index)
+										print(str(index))
+										result = True
+										while(result):
+											# ret,frame = cap.read()
+											cv2.imwrite(name+str(index)+'.jpg',freeze_img)
+											result = False
+										path_parent = os.path.dirname(os.getcwd())
+										os.chdir(path_parent)
+										print(os.getcwd())
+										cap.release()
+										cv2.destroyAllWindows()
+										analysis(os.getcwd()+'/database', 'VGG-Face', 'cosine')
+
 						
 						tic = time.time() #in this way, freezed image can show 5 seconds
 						
@@ -467,4 +491,4 @@ def analysis(db_path, model_name, distance_metric, enable_face_analysis = True):
 	cap.release()
 	cv2.destroyAllWindows()
 
-analysis("/home/dhruv/Deepface/database", 'VGG-Face', 'cosine')
+analysis(os.getcwd()+'/database', 'VGG-Face', 'cosine')
