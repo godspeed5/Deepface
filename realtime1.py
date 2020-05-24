@@ -18,7 +18,9 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 from deepface.basemodels import VGGFace, OpenFace, Facenet, FbDeepFace
 from deepface.extendedmodels import Age, Gender, Race, Emotion
 from deepface.commons import functions, realtime, distance as dst
-
+import socket
+UDP_IP = "192.168.4.1"
+UDP_PORT = 8080
 def analysis(db_path, model_name, distance_metric, enable_face_analysis = True):
 	
 	input_shape = (224, 224)
@@ -463,7 +465,7 @@ def analysis(db_path, model_name, distance_metric, enable_face_analysis = True):
 										analysis(os.getcwd()+'/database', 'VGG-Face', 'cosine')
 
 						
-						tic = time.time() #in this way, freezed image can show 5 seconds
+						tic = time.time() 
 						
 						#-------------------------------
 				
@@ -473,7 +475,13 @@ def analysis(db_path, model_name, distance_metric, enable_face_analysis = True):
 				cv2.putText(freeze_img, str(time_left), (40, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1)
 				
 				cv2.imshow('img', freeze_img)
-				
+				MESSAGE = str(label)+'\n'+str(mood_items)
+				# print(MESSAGE)
+				print("UDP target IP:", UDP_IP)
+				print("UDP target port:", UDP_PORT)
+				print("message:", MESSAGE)
+				sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) 
+				sock.sendto(MESSAGE.encode(), (UDP_IP, UDP_PORT))
 				freezed_frame = freezed_frame + 1
 			else:
 				face_detected = False
