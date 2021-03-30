@@ -1,3 +1,6 @@
+Contains work I did as part of my research internship with the Georgia Tech Center for Music Technology
+
+
 Based on the Deepface package available through pip install deepface.
 
 To run this code,
